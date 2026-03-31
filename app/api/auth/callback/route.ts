@@ -1,15 +1,16 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createServerClient } from "@supabase/ssr";
-import { cookies } from "next/headers";
 
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get("code");
-  // if "next" is in param, use it as the redirect URL
   const next = searchParams.get("next") ?? "/dashboard";
 
   if (code) {
-    const cookieStore = await cookies();
+    // Build the redirect response first, so we can set cookies on it
+    const redirectUrl = new URL(next, origin);
+    const redirectResponse = NextResponse.redirect(redirectUrl);
+
     const supabase = createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -19,26 +20,25 @@ export async function GET(request: NextRequest) {
         },
         cookies: {
           getAll() {
-            return cookieStore.getAll();
+            return request.cookies.getAll();
           },
           setAll(cookiesToSet) {
-            try {
-              cookiesToSet.forEach(({ name, value, options }) =>
-                cookieStore.set(name, value, options)
-              );
-            } catch {
-              // if setAll fails, middleware will handle it
-            }
+            // Write cookies directly onto the redirect response
+            cookiesToSet.forEach(({ name, value, options }) => {
+              redirectResponse.cookies.set(name, value, options);
+            });
           },
         },
       }
     );
+
     const { error } = await supabase.auth.exchangeCodeForSession(code);
+
     if (!error) {
-      return NextResponse.redirect(`${origin}${next}`);
+      return redirectResponse;
     }
   }
 
-  // return the user to an error page with instructions
-  return NextResponse.redirect(`${origin}/login?error=true`);
+  // On error, redirect to login with error param
+  return NextResponse.redirect(new URL("/login?error=true", origin));
 }
