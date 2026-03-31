@@ -7,9 +7,8 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-sans);
+  --font-sans: var(--font-jakarta);
   --font-mono: var(--font-geist-mono);
-  --font-heading: var(--font-sans);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -18,11 +17,6 @@
   --color-sidebar-primary: var(--sidebar-primary);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar: var(--sidebar);
-  --color-chart-5: var(--chart-5);
-  --color-chart-4: var(--chart-4);
-  --color-chart-3: var(--chart-3);
-  --color-chart-2: var(--chart-2);
-  --color-chart-1: var(--chart-1);
   --color-ring: var(--ring);
   --color-input: var(--input);
   --color-border: var(--border);
@@ -42,89 +36,221 @@
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) * 1.4);
-  --radius-2xl: calc(var(--radius) * 1.8);
-  --radius-3xl: calc(var(--radius) * 2.2);
-  --radius-4xl: calc(var(--radius) * 2.6);
+  --radius-xl: calc(var(--radius) * 1.5);
+  --radius-2xl: calc(var(--radius) * 2);
+
+  /* Applyo custom tokens */
+  --color-surface: var(--surface);
+  --color-sage: var(--sage);
+  --color-sage-hover: var(--sage-hover);
+  --color-sage-bg: var(--sage-bg);
+  --color-text-main: var(--text-main);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-hint: var(--text-hint);
+
+  /* Status colors */
+  --color-status-applied: var(--status-applied);
+  --color-status-review: var(--status-review);
+  --color-status-interview: var(--status-interview);
+  --color-status-offer: var(--status-offer);
+  --color-status-rejected: var(--status-rejected);
+  --color-status-ghosted: var(--status-ghosted);
+  --color-status-withdrawn: var(--status-withdrawn);
+  --color-status-saved: var(--status-saved);
 }
 
+/* ─── Light Mode ────────────────────────────────────────── */
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --radius: 0.75rem;
+
+  /* Applyo palette */
+  --background: #F8F6F1;
+  --surface: #ECEAE4;
+  --border: #D4D2CB;
+  --text-main: #2C2C2A;
+  --text-secondary: #6B6A65;
+  --text-hint: #9E9D98;
+
+  --sage: #7DA87B;
+  --sage-hover: #A8C9A6;
+  --sage-bg: #E8F2E8;
+
+  /* Shadcn token remaps */
+  --foreground: #2C2C2A;
+  --card: #ECEAE4;
+  --card-foreground: #2C2C2A;
+  --popover: #F8F6F1;
+  --popover-foreground: #2C2C2A;
+  --primary: #7DA87B;
+  --primary-foreground: #ffffff;
+  --secondary: #ECEAE4;
+  --secondary-foreground: #2C2C2A;
+  --muted: #ECEAE4;
+  --muted-foreground: #6B6A65;
+  --accent: #E8F2E8;
+  --accent-foreground: #2C2C2A;
+  --destructive: #E05454;
+  --input: #D4D2CB;
+  --ring: #7DA87B;
+
+  /* Sidebar */
+  --sidebar: #ECEAE4;
+  --sidebar-foreground: #2C2C2A;
+  --sidebar-primary: #7DA87B;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #E8F2E8;
+  --sidebar-accent-foreground: #2C2C2A;
+  --sidebar-border: #D4D2CB;
+  --sidebar-ring: #7DA87B;
+
+  /* Status */
+  --status-applied: #EAF3DE;
+  --status-review: #FAEEDA;
+  --status-interview: #E6F1FB;
+  --status-offer: #C0DD97;
+  --status-rejected: #FCEBEB;
+  --status-ghosted: #F1EFE8;
+  --status-withdrawn: #F1EFE8;
+  --status-saved: #EEEDFE;
+
+  --status-applied-text: #3D6B1A;
+  --status-review-text: #7A5318;
+  --status-interview-text: #1A4A7A;
+  --status-offer-text: #2D5A0A;
+  --status-rejected-text: #8B2020;
+  --status-ghosted-text: #4A4840;
+  --status-withdrawn-text: #4A4840;
+  --status-saved-text: #3A287A;
 }
 
+/* ─── Dark Mode ─────────────────────────────────────────── */
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  --background: #1A1C1A;
+  --surface: #252825;
+  --border: #3A3E3A;
+  --text-main: #E8E6E0;
+  --text-secondary: #9E9D98;
+  --text-hint: #6B6A65;
+
+  --sage: #6A9668;
+  --sage-hover: #4F7A4D;
+  --sage-bg: #253325;
+
+  --foreground: #E8E6E0;
+  --card: #252825;
+  --card-foreground: #E8E6E0;
+  --popover: #252825;
+  --popover-foreground: #E8E6E0;
+  --primary: #6A9668;
+  --primary-foreground: #ffffff;
+  --secondary: #3A3E3A;
+  --secondary-foreground: #E8E6E0;
+  --muted: #3A3E3A;
+  --muted-foreground: #9E9D98;
+  --accent: #253325;
+  --accent-foreground: #E8E6E0;
+  --destructive: #C0392B;
+  --input: #3A3E3A;
+  --ring: #6A9668;
+
+  --sidebar: #252825;
+  --sidebar-foreground: #E8E6E0;
+  --sidebar-primary: #6A9668;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #253325;
+  --sidebar-accent-foreground: #E8E6E0;
+  --sidebar-border: #3A3E3A;
+  --sidebar-ring: #6A9668;
+
+  --status-applied: #1E2E1A;
+  --status-review: #2E2518;
+  --status-interview: #162030;
+  --status-offer: #1A2E14;
+  --status-rejected: #2E1A1A;
+  --status-ghosted: #242422;
+  --status-withdrawn: #242422;
+  --status-saved: #1E1C30;
+
+  --status-applied-text: #A8D080;
+  --status-review-text: #D4A840;
+  --status-interview-text: #70B0E0;
+  --status-offer-text: #90D060;
+  --status-rejected-text: #E08080;
+  --status-ghosted-text: #9E9D98;
+  --status-withdrawn-text: #9E9D98;
+  --status-saved-text: #A090E0;
 }
 
+/* ─── Base Styles ───────────────────────────────────────── */
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
-    @apply bg-background text-foreground;
+    background-color: var(--background);
+    color: var(--text-main);
+    font-family: "Plus Jakarta Sans", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
+
   html {
-    @apply font-sans;
+    font-family: "Plus Jakarta Sans", sans-serif;
   }
+
+  /* Smooth scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 99px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--text-hint);
+  }
+
+  /* Selection */
+  ::selection {
+    background: var(--sage-bg);
+    color: var(--text-main);
+  }
+}
+
+/* ─── Utility Classes ───────────────────────────────────── */
+@layer utilities {
+  .text-main { color: var(--text-main); }
+  .text-secondary { color: var(--text-secondary); }
+  .text-hint { color: var(--text-hint); }
+  .bg-surface { background-color: var(--surface); }
+  .bg-main { background-color: var(--background); }
+  .border-app { border-color: var(--border); }
+  .text-sage { color: var(--sage); }
+  .bg-sage { background-color: var(--sage); }
+  .bg-sage-bg { background-color: var(--sage-bg); }
+
+  /* Glassmorphism card */
+  .glass-card {
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+  }
+
+  /* Status pill utilities */
+  .status-applied { background-color: var(--status-applied); color: var(--status-applied-text); }
+  .status-review { background-color: var(--status-review); color: var(--status-review-text); }
+  .status-interview { background-color: var(--status-interview); color: var(--status-interview-text); }
+  .status-offer { background-color: var(--status-offer); color: var(--status-offer-text); }
+  .status-rejected { background-color: var(--status-rejected); color: var(--status-rejected-text); }
+  .status-ghosted { background-color: var(--status-ghosted); color: var(--status-ghosted-text); }
+  .status-withdrawn { background-color: var(--status-withdrawn); color: var(--status-withdrawn-text); }
+  .status-saved { background-color: var(--status-saved); color: var(--status-saved-text); }
+
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 }
