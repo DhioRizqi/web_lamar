@@ -4,22 +4,19 @@ import { createServerClient } from "@supabase/ssr";
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get("code");
-  const next = searchParams.get("next") ?? "/callback";
+
+  // Determine correct public base URL (Vercel uses x-forwarded-host)
+  const forwardedHost = request.headers.get("x-forwarded-host");
+  const isLocalEnv = process.env.NODE_ENV === "development";
+  const baseUrl = isLocalEnv
+    ? origin
+    : forwardedHost
+    ? `https://${forwardedHost}`
+    : origin;
 
   if (code) {
-    // Determine the correct base URL.
-    // On Vercel, request.url may contain an internal hostname; use
-    // the x-forwarded-host header to get the real public hostname.
-    const forwardedHost = request.headers.get("x-forwarded-host");
-    const isLocalEnv = process.env.NODE_ENV === "development";
-    const baseUrl = isLocalEnv
-      ? origin
-      : forwardedHost
-      ? `https://${forwardedHost}`
-      : origin;
-
-    const redirectUrl = new URL(next, baseUrl);
-    const redirectResponse = NextResponse.redirect(redirectUrl);
+    // Collect cookies set by Supabase during exchange
+    const collectedCookies: { name: string; value: string; options: any }[] = [];
 
     const supabase = createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -33,9 +30,8 @@ export async function GET(request: NextRequest) {
             return request.cookies.getAll();
           },
           setAll(cookiesToSet) {
-            cookiesToSet.forEach(({ name, value, options }) => {
-              redirectResponse.cookies.set(name, value, options);
-            });
+            // Collect, don't write yet — we'll attach to the final response
+            collectedCookies.push(...cookiesToSet);
           },
         },
       }
@@ -44,18 +40,44 @@ export async function GET(request: NextRequest) {
     const { error } = await supabase.auth.exchangeCodeForSession(code);
 
     if (!error) {
-      return redirectResponse;
+      const dashboardUrl = `${baseUrl}/dashboard`;
+
+      // KEY FIX: Return an HTML 200 page instead of a 302 redirect.
+      // This guarantees the browser fully processes Set-Cookie headers
+      // BEFORE JavaScript navigates to the dashboard.
+      // With a 302 redirect, on some mobile browsers cookies may not be
+      // sent on the immediately-following redirect request.
+      const html = `<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Memproses login...</title>
+  </head>
+  <body>
+    <script>
+      window.location.replace("${dashboardUrl}");
+    </script>
+    <noscript>
+      <meta http-equiv="refresh" content="0;url=${dashboardUrl}">
+      <p>Redirecting...</p>
+    </noscript>
+  </body>
+</html>`;
+
+      const response = new NextResponse(html, {
+        status: 200,
+        headers: { "Content-Type": "text/html; charset=utf-8" },
+      });
+
+      // Attach session cookies to this HTML response
+      collectedCookies.forEach(({ name, value, options }) => {
+        response.cookies.set(name, value, options);
+      });
+
+      return response;
     }
   }
 
-  const forwardedHost = request.headers.get("x-forwarded-host");
-  const errorBase =
-    process.env.NODE_ENV === "development"
-      ? origin
-      : forwardedHost
-      ? `https://${forwardedHost}`
-      : origin;
-
-  return NextResponse.redirect(new URL("/login?error=true", errorBase));
+  return NextResponse.redirect(new URL("/login?error=true", baseUrl));
 }
 
