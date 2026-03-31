@@ -7,8 +7,18 @@ export async function GET(request: NextRequest) {
   const next = searchParams.get("next") ?? "/dashboard";
 
   if (code) {
-    // Build the redirect response first, so we can set cookies on it
-    const redirectUrl = new URL(next, origin);
+    // Determine the correct base URL.
+    // On Vercel, request.url may contain an internal hostname; use
+    // the x-forwarded-host header to get the real public hostname.
+    const forwardedHost = request.headers.get("x-forwarded-host");
+    const isLocalEnv = process.env.NODE_ENV === "development";
+    const baseUrl = isLocalEnv
+      ? origin
+      : forwardedHost
+      ? `https://${forwardedHost}`
+      : origin;
+
+    const redirectUrl = new URL(next, baseUrl);
     const redirectResponse = NextResponse.redirect(redirectUrl);
 
     const supabase = createServerClient(
@@ -16,14 +26,13 @@ export async function GET(request: NextRequest) {
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
       {
         cookieOptions: {
-          maxAge: 7 * 24 * 60 * 60, // 1 minggu
+          maxAge: 7 * 24 * 60 * 60,
         },
         cookies: {
           getAll() {
             return request.cookies.getAll();
           },
           setAll(cookiesToSet) {
-            // Write cookies directly onto the redirect response
             cookiesToSet.forEach(({ name, value, options }) => {
               redirectResponse.cookies.set(name, value, options);
             });
@@ -39,6 +48,14 @@ export async function GET(request: NextRequest) {
     }
   }
 
-  // On error, redirect to login with error param
-  return NextResponse.redirect(new URL("/login?error=true", origin));
+  const forwardedHost = request.headers.get("x-forwarded-host");
+  const errorBase =
+    process.env.NODE_ENV === "development"
+      ? origin
+      : forwardedHost
+      ? `https://${forwardedHost}`
+      : origin;
+
+  return NextResponse.redirect(new URL("/login?error=true", errorBase));
 }
+
