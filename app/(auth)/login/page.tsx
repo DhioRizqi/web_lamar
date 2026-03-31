@@ -2,26 +2,44 @@
 
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import Image from "next/image";
 
 export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
+  const [isCheckingSession, setIsCheckingSession] = useState(true);
   const supabase = createClient();
+
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        if (session) {
+          window.location.href = "/dashboard";
+          return;
+        }
+        setIsCheckingSession(false);
+      }
+    );
+
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
+        window.location.href = "/dashboard";
+      } else {
+        setIsCheckingSession(false);
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [supabase.auth]);
 
   const handleGoogleLogin = async () => {
     try {
       setIsLoading(true);
-      
-      const protocol = window.location.protocol;
-      const host = window.location.host;
-      const redirectUrl = `${protocol}//${host}/api/auth/callback`;
-      
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
-          redirectTo: redirectUrl,
+          redirectTo: `${window.location.origin}/login`,
         },
       });
 
@@ -35,9 +53,19 @@ export default function LoginPage() {
     }
   };
 
+  if (isCheckingSession) {
+    return (
+      <div className="min-h-screen w-full flex items-center justify-center bg-[#F8F6F1]">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-12 h-12 border-4 border-[#7DA87B]/30 border-t-[#7DA87B] rounded-full animate-spin" />
+          <p className="text-[#7DA87B] font-semibold text-lg">Memproses...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen w-full font-sans antialiased relative overflow-hidden bg-[#F8F6F1]">
-      {/* Decorative Topographic / Pattern Background */}
       <div className="absolute inset-0 pointer-events-none opacity-60">
         <svg className="absolute left-0 top-0 h-full w-full lg:w-[70%] text-[#EAE6DA]" xmlns="http://www.w3.org/2000/svg">
           <defs>
@@ -51,7 +79,6 @@ export default function LoginPage() {
           <rect width="100%" height="100%" fill="url(#topo)" />
         </svg>
         
-        {/* Scattered Shapes (More abundant to fill space) */}
         <div className="absolute left-[5%] md:left-[10%] top-[15%] w-5 h-5 rounded-full bg-[#B29986] opacity-70"></div>
         <div className="absolute left-[85%] md:left-[40%] top-[10%] w-3 h-3 rounded-full bg-[#8BA78D] opacity-70"></div>
         <div className="absolute left-[20%] top-[40%] w-6 h-6 border-[3px] border-[#8BA78D] rounded-full opacity-60"></div>
@@ -60,7 +87,6 @@ export default function LoginPage() {
         <div className="absolute left-[70%] md:left-[25%] bottom-[15%] w-8 h-8 border-b-[3px] border-r-[3px] border-[#B29986] rounded-br-[32px] opacity-60 rotate-45"></div>
         <div className="absolute left-[10%] bottom-[40%] w-3 h-3 rounded-md bg-[#DFD6C9] opacity-80 rotate-45"></div>
         
-        {/* Decorative Lines */}
         <div className="absolute hidden lg:block right-[15%] top-[15%] w-[120px] h-[1px] bg-[#D1C8B9]"></div>
         <div className="absolute hidden lg:block right-[12%] top-[15%] w-[8px] h-[8px] border border-[#B29986] rounded-full -translate-y-[3px]"></div>
         <div className="absolute hidden lg:block right-[25%] bottom-[20%] w-[150px] h-[1px] bg-[#D1C8B9]"></div>
