@@ -29,7 +29,7 @@ export default function RootLayout({
   return (
     <html lang="id" suppressHydrationWarning>
       <body suppressHydrationWarning className={`${jakarta.variable} ${geistMono.variable} min-h-screen bg-main text-main font-sans antialiased flex flex-col`}>
-        <NextTopLoader color="hsl(var(--primary))" showSpinner={false} />
+        <NextTopLoader color="var(--sage)" showSpinner={false} height={3} />
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
