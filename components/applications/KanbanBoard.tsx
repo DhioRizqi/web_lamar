@@ -16,7 +16,8 @@ import {
   DragOverlay,
   closestCorners,
   KeyboardSensor,
-  PointerSensor,
+  MouseSensor,
+  TouchSensor,
   useSensor,
   useSensors,
   DragStartEvent,
@@ -47,7 +48,8 @@ export function KanbanBoard({ applications: initialApplications }: KanbanBoardPr
   }, [applications]);
 
   const sensors = useSensors(
-    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(MouseSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(TouchSensor, { activationConstraint: { delay: 250, tolerance: 5 } }),
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
   );
 
@@ -200,7 +202,7 @@ function SortableTask({ application }: { application: Application }) {
   }
 
   return (
-    <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
+    <div ref={setNodeRef} style={style} {...attributes} {...listeners} className="touch-manipulation outline-none">
       <KanbanCard application={application} />
     </div>
   );
@@ -212,7 +214,7 @@ function KanbanCard({ application }: { application: Application }) {
   useEffect(() => setMounted(true), []);
 
   return (
-    <div className="bg-main border border-app hover:border-sage/50 rounded-xl p-4 shadow-sm cursor-grab active:cursor-grabbing transition-colors">
+    <div className="bg-main border border-app hover:border-sage/50 rounded-xl p-4 shadow-sm cursor-grab active:cursor-grabbing transition-colors select-none">
       <div className="flex items-start justify-between mb-3">
         <h4 className="font-bold text-sm text-main leading-tight line-clamp-2">{application.position}</h4>
         <Button
